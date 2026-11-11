@@ -64,4 +64,4 @@ public/qq-speed/               QQ 飞车
 pelican-bike/ cf-transport-ship/ qq-speed/   源码（逻辑未改动）
 ```
 
-源码来自 [riba2534/claude-opus-5-5-demo](https://github.com/riba2534/claude-opus-5-5-demo)，Claude Opus 5.5 one-shot 生成。游戏为能力测试用途的致敬作品，与《穿越火线》《QQ 飞车》原厂无关。
+与《穿越火线》《QQ 飞车》原厂无关。
