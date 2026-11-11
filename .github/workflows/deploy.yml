@@ -8,19 +8,30 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
+      # 未配置 API Token 时干净跳过（GitHub job-level if 无法直接读 secrets，这里用 step 级守卫）
+      - name: Skip when API token is not configured
+        if: env.CF_TOKEN == ''
+        run: echo "::notice title=Skipped::CLOUDFLARE_API_TOKEN 未配置，跳过部署；线上仍为上一次 Direct Upload 版本"
+
       - uses: actions/checkout@v4
+        if: env.CF_TOKEN != ''
 
       - uses: actions/setup-node@v4
+        if: env.CF_TOKEN != ''
         with:
           node-version: '22'
 
       # build-all.mjs 会给三个子工程分别装依赖（强制公网 registry）并打包到 public/
       - name: Build
+        if: env.CF_TOKEN != ''
         run: npm run build
 
       - name: Deploy
+        if: env.CF_TOKEN != ''
         run: npx wrangler@4 pages deploy public --project-name=claude-opus-5-5-games --branch=main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
