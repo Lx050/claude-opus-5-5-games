@@ -1,0 +1,10 @@
+# 原仓库规则
+node_modules
+dist
+
+# 私服 lockfile 备份（原文件指向字节内网 bnpm.byted.org，公网不可解析，仅留档不入库）
+*.byted-lock-backup
+package-lock.json.orig
+
+# 说明：public/ 故意入库 —— Cloudflare Pages 可零构建直接托管，绕开 CI 的 npm 镜像与 Node 版本差异
+.DS_Store

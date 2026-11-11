@@ -1,0 +1,14 @@
+{
+  "name": "claude-opus-5-5-games",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "三个 pure-static Three.js 游戏，聚合为一个 Cloudflare Pages 站点",
+  "scripts": {
+    "build": "node build-all.mjs",
+    "deploy": "bash deploy.sh"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

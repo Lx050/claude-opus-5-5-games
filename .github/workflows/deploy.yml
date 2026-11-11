@@ -1,0 +1,26 @@
+name: Deploy games to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # build-all.mjs 会给三个子工程分别装依赖（强制公网 registry）并打包到 public/
+      - name: Build
+        run: npm run build
+
+      - name: Deploy
+        run: npx wrangler@4 pages deploy public --project-name=claude-opus-5-5-games --branch=main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
