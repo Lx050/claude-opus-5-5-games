@@ -7,8 +7,11 @@
 | 用途 | 地址 | 更新方式 |
 | --- | --- | --- |
 | **自定义域名（目标）** | https://xiaomimimogames.maniforld.com/ | 与 Git 项目同一套部署；需先补一条 DNS CNAME，见下文 |
-| **正式（自动部署，当前可用）** | https://claude-opus-5-5-games-git.pages.dev/ | push 到 `main`，Cloudflare Pages Git 集成自动发布 |
+| **Cloudflare Pages（自动部署）** | https://claude-opus-5-5-games-git.pages.dev/ | push 到 `main`，Cloudflare Pages Git 集成自动发布 |
+| **GitHub Pages（自动部署）** | https://maniforld.com/claude-opus-5-5-games/ | push 到 `main`，`.github/workflows/pages.yml` 构建并发布 `public/` |
 | 初始 Direct Upload 版 | https://claude-opus-5-5-games.pages.dev/ | 手动 `wrangler pages deploy`，不随 push 更新 |
+
+GitHub Pages 走 Actions 构建（`build_type: workflow`），仓库的 Pages 自定义域名是 `maniforld.com`，所以 `lx050.github.io/claude-opus-5-5-games/` 会跳转到 `maniforld.com/claude-opus-5-5-games/`。注意 GitHub Pages 免费版要求仓库公开；若把仓库设为 private，GitHub Pages 会停止服务。
 
 Cloudflare Pages 项目 `claude-opus-5-5-games-git` 配置：`build_command` 为空、`destination_dir = public`、`root_dir = /`、`production_branch = main`。仓库里的 `public/` 是已构建产物，所以 Cloudflare 侧无需安装依赖、无需跑构建。
 
