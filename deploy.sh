@@ -10,6 +10,9 @@ BRANCH="${2:-main}"
 echo "==> 构建三个游戏到 public/"
 npm run build
 
+echo "==> 确保 Pages 项目存在（已存在时忽略创建错误）"
+wrangler pages project create "$PROJECT" --production-branch="$BRANCH" >/dev/null 2>&1 || true
+
 echo "==> 上传到 Cloudflare Pages: ${PROJECT} (${BRANCH})"
 wrangler pages deploy public --project-name="$PROJECT" --branch="$BRANCH"
 
