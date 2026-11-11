@@ -6,10 +6,35 @@
 
 | 用途 | 地址 | 更新方式 |
 | --- | --- | --- |
-| **正式（自动部署）** | https://claude-opus-5-5-games-git.pages.dev/ | push 到 `main`，Cloudflare Pages Git 集成自动发布 |
+| **自定义域名（目标）** | https://xiaomimimogames.maniforld.com/ | 与 Git 项目同一套部署；需先补一条 DNS CNAME，见下文 |
+| **正式（自动部署，当前可用）** | https://claude-opus-5-5-games-git.pages.dev/ | push 到 `main`，Cloudflare Pages Git 集成自动发布 |
 | 初始 Direct Upload 版 | https://claude-opus-5-5-games.pages.dev/ | 手动 `wrangler pages deploy`，不随 push 更新 |
 
 Cloudflare Pages 项目 `claude-opus-5-5-games-git` 配置：`build_command` 为空、`destination_dir = public`、`root_dir = /`、`production_branch = main`。仓库里的 `public/` 是已构建产物，所以 Cloudflare 侧无需安装依赖、无需跑构建。
+
+## 自定义域名
+
+`xiaomiMIMOgames.maniforld.com` 已作为 custom domain 添加到 Pages 项目 `claude-opus-5-5-games-git`（Cloudflare API 会把主机名规范化为小写 `xiaomimimogames.maniforld.com`；DNS / URL 的主机名大小写不敏感，输入原样大小写同样可访问）。
+
+**当前状态：域名处于 `pending`，等待 DNS 记录。** `maniforld.com` 上存在 `*.maniforld.com` 泛解析，请求会落到 Cloudflare 边缘但没有路由到 Pages（返回 200 空响应）。需要补一条：
+
+| 字段 | 值 |
+| --- | --- |
+| Type | `CNAME` |
+| Name | `xiaomimimogames`（完整名 `xiaomimimogames.maniforld.com`） |
+| Target | `claude-opus-5-5-games-git.pages.dev` |
+| Proxy | Proxied（橙色云）或 DNS only 均可 |
+
+具体记录优先于泛解析，无需删除任何既有记录。两种方式二选一：
+
+1. **一键脚本**（需要 `Zone / DNS / Edit` 权限的 API Token）：
+   ```bash
+   CF_API_TOKEN=<token> ./setup-domain.sh
+   ```
+   脚本会先验证 token、检查同名 CNAME 是否冲突（不覆盖已有异值记录）、创建记录，再轮询域名状态并校验线上可访问。
+2. **Dashboard 手动**：`maniforld.com` → DNS → Add record，按上表填写，保存后等证书自动签发。
+
+> 现有 wrangler OAuth 登录态只有 `zone:read`，没有 DNS 写权限，因此 API 直接创建记录会返回 `403 code 10000`。这也是上面需要单独 token 的原因。
 
 ## 本地构建
 
@@ -26,6 +51,8 @@ npm run build     # 依次构建三个子工程，输出到 public/<slug>/index.
 ```
 
 或在 GitHub Actions 里手动 dispatch `deploy.yml`（需 `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`）。日常更新不需要这一步，直接 push 即可。
+
+`setup-domain.sh` 只负责补 DNS 记录，不参与日常部署；DNS 生效后无需再运行。
 
 ## 目录
 
