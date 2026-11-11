@@ -1,8 +1,9 @@
-name: Deploy games to Cloudflare Pages
+name: Deploy games to Cloudflare Pages (manual fallback)
 
+# 自动部署由 Cloudflare Pages 的 Git 集成负责：push 到 main 会自动构建并发布。
+# 此 workflow 仅作手动备用通道，触发需要 CLOUDFLARE_API_TOKEN；
+# 保留 push 触发会与 Git 集成重复部署，故不启用。
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 jobs:
