@@ -8,3 +8,6 @@ package-lock.json.orig
 
 # 说明：public/ 故意入库 —— Cloudflare Pages 可零构建直接托管，绕开 CI 的 npm 镜像与 Node 版本差异
 .DS_Store
+
+# wrangler 本地缓存
+.wrangler/
